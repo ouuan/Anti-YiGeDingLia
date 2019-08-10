@@ -50,8 +50,6 @@ for idiom in idioms:
 		continue
 	first = processTones(pinyin[0])
 	last = processTones(pinyin[3])
-	if first == last:
-		continue
 	if not first in dis:
 		#print(first, idiom['word'])
 		dis[first] = {first: {'dist': 0, 'word': []}};
@@ -62,6 +60,8 @@ for idiom in idioms:
 		graph[last] = set()
 	if first != last:
 		dis[first][last] = {'dist': 1, 'word': [idiom['word']]}
+	else:
+		dis[first][last] = {'dist': 0, 'word': [idiom['word']]}
 	graph[first].add(last)
 
 cnt = 0
