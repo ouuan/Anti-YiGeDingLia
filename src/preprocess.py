@@ -34,7 +34,6 @@ vowels = {
 	'ɡ': 'g'
 }
 
-dis = {}
 graph = {}
 
 def processTones(s):
@@ -51,41 +50,11 @@ for idiom in idioms:
 		continue
 	first = processTones(pinyin[0])
 	last = processTones(pinyin[3])
-	if not first in dis:
-		#print(first, idiom['word'])
-		dis[first] = {first: {'dist': 0, 'word': []}};
-		graph[first] = set()
-	if not last in dis:
-		#print(idiom['word'], last)
-		dis[last] = {last: {'dist': 0, 'word': []}};
-		graph[last] = set()
-	if first != last:
-		dis[first][last] = {'dist': 1, 'word': [idiom['word']]}
-	else:
-		dis[first][last] = {'dist': 0, 'word': [idiom['word']]}
-	graph[first].add(last)
-
-cnt = 0
-for k in dis.keys():
-	cnt = cnt + 1
-	print(k, str(cnt) + '/' + str(len(dis)))
-	for i in dis.keys():
-		for j in dis.keys():
-			if k in dis[i] and j in dis[k]:
-				newdis = dis[i][k]['dist'] + dis[k][j]['dist']
-				if (not j in dis[i]) or (newdis < dis[i][j]['dist']):
-					if not j in dis[i]:
-						dis[i][j] = {}
-					dis[i][j]['dist'] = newdis
-					dis[i][j]['word'] = dis[i][k]['word'] + dis[k][j]['word']
-
-graph_list = {}
-
-for u, adj in graph.items():
-	graph_list[u] = []
-	for v in adj:
-		graph_list[u].append(v)
-
+	if not first in graph:
+		graph[first] = {}
+	if not last in graph:
+		graph[last] = {}
+	graph[first][last] = idiom['word']
+	
 with open('..\\data\\yigedinglia.json', "w", encoding='utf-8') as processedjson:
-	processedjson.write('var dis = ' + json.dumps(dis, ensure_ascii = False) + ';\n');
-	processedjson.write('var graph = ' + json.dumps(graph_list, ensure_ascii = False) + ';\n');
+	processedjson.write('var graph = ' + json.dumps(graph, ensure_ascii = False) + ';');
