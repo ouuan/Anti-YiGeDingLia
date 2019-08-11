@@ -54,7 +54,7 @@ for idiom in idioms:
 		graph[first] = {}
 	if not last in graph:
 		graph[last] = {}
-	graph[first][last] = idiom['word']
+	graph[last][first] = idiom['word']
 	
 with open('..\\data\\yigedinglia.json', "w", encoding='utf-8') as processedjson:
 	processedjson.write('var graph = ' + json.dumps(graph, ensure_ascii = False) + ';');
