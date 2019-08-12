@@ -137,7 +137,11 @@ for u in graph:
 	farthest[u] = getFarthest(u)
 	loop[u] = getLoop(u)
 
-with open('..\\data\\yigedinglia.json', "w", encoding='utf-8') as processedjson:
+with open('..\\data\\graph.json', "w", encoding = 'utf-8') as graphjson:
+	graphjson.write(('var graph = ') + json.dumps(graph, ensure_ascii = False) + ';\n');
+	graphjson.write(('var igraph = ') + json.dumps(igraph, ensure_ascii = False) + ';\n');
+
+with open('..\\data\\yigedinglia.json', "w", encoding = 'utf-8') as processedjson:
 	processedjson.write('var shortest = ' + json.dumps(shortest, ensure_ascii = False) + ';\n');
 	processedjson.write('var farthest = ' + json.dumps(farthest, ensure_ascii = False) + ';\n');
 	processedjson.write('var loop = ' + json.dumps(loop, ensure_ascii = False) + ';\n');
