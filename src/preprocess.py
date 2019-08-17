@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import json
+from collections import OrderedDict
 
 with open('..\\data\\idiom.json', "r", encoding = 'utf-8') as idiomjson:
 	idioms = json.load(idiomjson)
@@ -34,8 +35,8 @@ vowels = {
 	'ɡ': 'g'
 }
 
-graph = {}
-igraph = {}
+graph = OrderedDict()
+igraph = OrderedDict()
 
 def processTones(s):
 	for vowel, letter in vowels.items():
@@ -52,15 +53,29 @@ for idiom in idioms:
 	first = processTones(pinyin[0])
 	last = processTones(pinyin[3])
 	if not first in graph:
-		graph[first] = {}
-		igraph[first] = {}
+		graph[first] = OrderedDict()
+		igraph[first] = OrderedDict()
 	if not last in graph:
-		graph[last] = {}
-		igraph[last] = {}
+		graph[last] = OrderedDict()
+		igraph[last] = OrderedDict()
 	graph[first][last] = igraph[last][first] = idiom['word']
 
-nodis = {}
-nopre = {}
+def sortedDict(x):
+	keys = sorted(x.keys())
+	out = OrderedDict()
+	for key in keys:
+		out[key] = x[key]
+	return out
+
+for u in graph:
+	graph[u] = sortedDict(graph[u])
+	igraph[u] = sortedDict(igraph[u])
+
+graph = sortedDict(graph)
+igraph = sortedDict(igraph)
+
+nodis = OrderedDict()
+nopre = OrderedDict()
 q = []
 ql = 0
 qr = -1
@@ -81,8 +96,11 @@ while ql <= qr:
 			q.append(v)
 			qr = qr + 1
 
-loopdis = {}
-looppre = {}
+nodis = sortedDict(nodis)
+nopre = sortedDict(nopre)
+
+loopdis = OrderedDict()
+looppre = OrderedDict()
 q = []
 ql = 0
 qr = -1
@@ -102,6 +120,9 @@ while ql <= qr:
 			looppre[v] = u
 			q.append(v)
 			qr = qr + 1
+
+loopdis = sortedDict(loopdis)
+looppre = sortedDict(looppre)
 
 def getShortest(u):
 	if nodis[u] == 0:
@@ -128,14 +149,18 @@ def getLoop(u):
 		return graph[u][u]
 	return graph[u][looppre[u]] + ' → ' + getLoop(looppre[u])
 
-shortest = {}
-farthest = {}
-loop = {}
+shortest = OrderedDict()
+farthest = OrderedDict()
+loop = OrderedDict()
 
 for u in graph:
 	shortest[u] = getShortest(u)
 	farthest[u] = getFarthest(u)
 	loop[u] = getLoop(u)
+
+shortest = sortedDict(shortest)
+farthest = sortedDict(farthest)
+loop = sortedDict(loop)
 
 with open('..\\data\\dis.json', "w", encoding = 'utf-8') as disjson:
 	disjson.write('var nodis = ' + json.dumps(nodis, ensure_ascii = False) + ';\n');
